@@ -1,0 +1,219 @@
+// global variables
+
+var today = new Date();
+var month = today.getMonth();
+var daysOfTheWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var userEvents = []; 
+var date = (daysOfTheWeek[today.getDay()]+", "+(today.getMonth()+1)+'-'+today.getDate()+'-'+today.getFullYear());
+var randomEvents = ["Play an Insturment", "Paint a picture", "Clean your room or house", "Go to the mall/movies", "Visit a friend", "Try a new recipe", "Start learning a new language"];
+var M = [];
+var D = [];
+var E = [];
+
+setText("monthLabel", months[month]);
+DaysInMonth();
+setDays();
+setText("currentDate", "Today: "+date);
+
+// event handlers
+
+onEvent("startButton", "click", function (){
+  setScreen("Calendar");
+});
+
+onEvent("rightButton", "click", function() {
+  month++; 
+  if (month > 11) {
+    month = 0;
+  }
+  setText("monthLabel", months[month]);
+  clearDays();
+  DaysInMonth();
+});
+
+onEvent("leftButton", "click", function(){
+  month--; 
+  if (month < 0) {
+    month = 11;
+  }
+  setText("monthLabel", months[month]);
+  clearDays();
+  DaysInMonth();
+});
+
+onEvent("addToList", "click", function(){
+  showElement("eventInput");
+  showElement("addList");
+});
+
+onEvent("addList", "click", function(){
+  if(getText("eventInput") != ""){
+    randomEvents.push(getText("eventInput"));
+  }
+  hideElement("addList");
+  hideElement("eventInput");
+  hide();
+});
+
+onEvent("dropdown1", "click", function() {
+  if (getText("dropdown1") == "Events") {
+    setScreen("Events");    
+    setText("dropdown1", "Calendar");
+  }
+});
+
+onEvent("dropdown2", "click", function (){
+  if (getText("dropdown2") == "Calendar"){
+    setScreen("Calendar");
+    setText("dropdown2", "Events");
+  }
+});
+
+onEvent("addEvent", "click", function() {
+  showElement("eventInput");
+  showElement("exitButton");
+  showElement("eventDay");
+  showElement("eventMonth");
+  showElement("addButton");  
+});
+
+onEvent("exitButton", "click", function() {
+  hide();
+  setText("eventList", userEvents.join('\r\n'));
+});
+
+onEvent("deleteEvent", "click", function(){
+  showElement("deleteInput");
+  showElement("delete");
+  showElement("exitButton");
+  showElement("eventMonth");
+  showElement("eventDay");
+});
+
+onEvent("delete", "click", function() {
+  var a = (getText("deleteInput")+", "+getText("eventMonth")+" "+getText("eventDay"));
+  var b = userEvents.indexOf(a);
+  for(var item in userEvents){
+    if (userEvents[item] == a){
+      userEvents.splice(b, 1);
+    }
+  }
+  hide();
+  setText("eventList", userEvents.join('\r\n'));
+});
+
+onEvent("addButton", "click", function(){
+  E.push(getText("eventInput"));
+  editEvents(getText("eventInput")+", "+getText("eventMonth")+" "+getText("eventDay"));
+});
+
+onEvent("giveEvent", "click", function() {
+  setText("randomEvent", randomEvents[randomNumber(0, randomEvents.length-1)]);
+  showElement("eventDay");
+  showElement("eventMonth");
+});
+
+onEvent("addRandom", "click", function() {
+  E.push(getText("randomEvent"));   
+  editEvents(getText("randomEvent")+", "+getText("eventMonth")+" "+getText("eventDay"));
+});
+
+// functions
+
+function editEvents(text) {
+  var a = (text);
+  M.push(getText("eventMonth"));
+  D.push(getText("eventDay"));
+  if ((getText("randomEvent") || getText("eventInput")) != ""){
+    userEvents.push(a);
+  }
+  setText("eventList", userEvents.join('\r\n'));
+  hide();
+}
+
+function clearDays (){
+var num = 1;  
+  for(var i = 1; i < 42; i++){
+    setText(("day" + num), '');
+    num++;
+  }
+}
+
+function setDays(startDay, numOfDays) {
+  var days = startDay;
+  var monthDay = 1;
+  for(var i = 0; i < numOfDays; i++){
+    setText(("day" + days), monthDay);
+    for (var mon in M){
+    if (M[mon] == getText("monthLabel")){
+      for (var b = 1; b<40; b++){
+        if (b == monthDay){
+          for (var d in D){
+            if ((D[d] == monthDay) && (M[d] == getText("monthLabel"))){
+              setText(("day" + days), monthDay+" "+E[d]);
+            }
+          }
+        }
+      }
+    }
+  }
+    days++;
+    monthDay++;
+  }
+}
+
+function hide() {
+  hideElement("eventInput");
+  hideElement("addButton");  
+  hideElement("eventDay");
+  hideElement("eventMonth");
+  hideElement("exitButton");
+  hideElement("delete");
+  hideElement("deleteInput");
+  hideElement("addList");
+  setText("randomEvent", "");
+  setText("eventInput", "");
+  setText("deleteInput", "");
+  setText("eventDay", 1);
+  setText("eventMonth", "January");
+}
+
+function DaysInMonth () {
+  if (month == 0){
+  setDays(4, 31);
+} 
+  if (month == 1){
+  setDays(7, 29);
+} 
+  if (month == 2){
+  setDays(1, 31);
+} 
+  if (month == 3){
+  setDays(4, 30);
+} 
+  if (month == 4){
+  setDays(6, 31);
+} 
+  if (month == 5){
+  setDays(2, 30);
+} 
+  if (month == 6){
+  setDays(4, 31);
+} 
+  if (month == 7){
+  setDays(7, 31);
+} 
+  if (month == 8){
+  setDays(3, 30);
+} 
+  if (month == 9){
+  setDays(5, 31);
+} 
+  if (month == 10){
+  setDays(1, 30);
+} 
+  if (month == 11){
+  setDays(3, 31);
+} 
+}
